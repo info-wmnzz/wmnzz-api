@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\HomePage\CustomerHomePageController;
 
 
 /*
@@ -27,4 +28,10 @@ Route::post('/login-mobile', [AuthController::class, 'loginWithMobile']);
 
 Route::post('/signup', [AuthController::class, 'signUpWithMobile']);
 Route::post('/otp-verification', [AuthController::class, 'otpVerification']);
+
+Route::get('/catgroy-list',[CustomerHomePageController::class,'getCatgorys']);
+Route::get('/products-list',[CustomerHomePageController::class,'getProducts']);
+Route::get('/category-with-products',[CustomerHomePageController::class,'getCategoryWithProducts']);
+
+
 

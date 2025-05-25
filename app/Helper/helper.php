@@ -15,3 +15,10 @@ if (! function_exists('generateId')) {
         return $prefix . $shortName . $random;
     }
 }
+
+if(! function_exists('createSlug')){
+    function createSlug($string)
+    {
+        return \Str::slug($string, '-');
+    }
+}
