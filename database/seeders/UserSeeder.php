@@ -26,7 +26,9 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'mobile_verified_at' => now(),
             'otp' => '666666',
-            'role_id' => 1
+            'role_id' => 1,
+            'status' => 1,
+            'cus_id' => 'WMNZSUP123'
         ]);
 
          User::create([
@@ -38,6 +40,8 @@ class UserSeeder extends Seeder
             'mobile_verified_at' => now(),
             'otp' => '666666',
             'role_id' => 2,
+            'status' => 1,
+            'cus_id' => 'WMNZCUS123'
         ]);
     }
 }

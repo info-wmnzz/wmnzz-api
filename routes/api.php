@@ -22,3 +22,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::post('/login-mobile', [AuthController::class, 'loginWithMobile']);
+
+// Register apis
+
+Route::post('/signup', [AuthController::class, 'signUpWithMobile']);
+Route::post('/otp-verification', [AuthController::class, 'otpVerification']);
+
