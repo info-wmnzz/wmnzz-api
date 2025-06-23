@@ -11,7 +11,7 @@
     </div>
 
     <div class="table-responsive">
-        <table class="table table-hover table-striped align-middle shadow-sm border">
+        <table class="table table-bordered table-striped common-datatable">
             <thead class="table-dark">
                 <tr>
                     <th scope="col" class="text-center">ID</th>

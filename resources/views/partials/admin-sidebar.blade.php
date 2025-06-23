@@ -54,6 +54,30 @@
         </li>
 
         <li class="item">
+          <a href="{{ route('admin.categories.index') }}">
+            <i class="fa-solid fas fa-box"></i>
+            <span class="item-text">Category</span>
+            <span class="item-tooltip">Category</span>
+          </a>
+        </li>
+
+        <li class="item">
+          <a href="#">
+            <i class="fas fa-layer-group"></i>
+            <span class="item-text">Product</span>
+            <span class="item-tooltip">Product</span>
+          </a>
+        </li>
+
+         <li class="item">
+          <a href="#">
+            <i class="fas fa-store"></i>
+            <span class="item-text">Seller</span>
+            <span class="item-tooltip">Seller</span>
+          </a>
+        </li>
+
+        <li class="item">
           <a href="{{ route('logout') }}">
                         <i class="fa-solid fa-right-from-bracket"></i>
             <span class="item-text">Logout</span>

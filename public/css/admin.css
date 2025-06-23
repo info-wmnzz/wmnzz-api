@@ -580,3 +580,57 @@ body .sidebar:has(#minimize:checked) .footer .switch .item {
 body .sidebar:has(#minimize:checked) .footer .switch .active:before {
     border-radius: 5rem;
 }
+
+/* Button Styles */
+.add-button {
+    background-color: #e1206b;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 10px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.add-button:hover {
+    background-color: #c41c5e;
+}
+
+.btn-back {
+    background-color: #d5d5d5;
+    color: white;
+    padding: 8px 16px;
+    margin: 0 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 10px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-back:hover {
+    background-color: #7e7e7e7a;
+}
+
+.btn-primary-wmn{
+     background-color: #e1206b !important;
+     color: white !important;
+}
+
+.headerMenu{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0px;
+    margin: 20px 0;
+}
+.form_wmn label{
+    margin: 0 0 10px 0;
+}
+.form_wmn{
+    width: 60%;
+    margin: 0 auto;
+}
