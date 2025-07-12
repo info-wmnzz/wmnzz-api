@@ -12,7 +12,7 @@
 
     <div class="table-responsive">
         <table class="table table-bordered table-striped common-datatable">
-            <thead class="table-dark">
+t            <thead class="table-dark">
                 <tr>
                     <th scope="col" class="text-center">ID</th>
                     <th scope="col">Preview</th>

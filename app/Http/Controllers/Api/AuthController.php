@@ -11,6 +11,8 @@ class AuthController extends Controller
 {
     public function loginWithMobile(Request $request)
     {
+        $tip       = "User Login";
+        $message   = "Login successful";
         $validator = Validator::make($request->all(), [
             'mobile'   => ['required', 'regex:/^[6-9]\d{9}$/'],
             'password' => ['required', 'min:8', 'regex:/^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/'],
@@ -20,29 +22,33 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['status' => false, 'message' => $validator->errors()->first()], 422);
+            $responseArray = apiResponse("Failed", $validator, false, "", 422, $tip);
+            return response()->json($responseArray, 422);
         }
 
         $user = User::where('mobile', $request->mobile)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
-            return response()->json(['status' => false, 'message' => 'Invalid mobile or password'], 401);
+            $responseArray = apiResponse("Failed", '', false, '', 401, $tip, 'Invalid mobile or password');
+            return response()->json($responseArray, 401);
         }
 
         if ($user->role_id != 2) {
-            return response()->json(['status' => false, 'message' => 'Unauthorized role'], 403);
+            $responseArray = apiResponse("Failed", '', false, '', 403, $tip, 'Unauthorized role');
+            return response()->json($responseArray, 403);
         }
 
         $tokenResult = $user->createToken('MobileLoginToken');
         $token       = $tokenResult->accessToken;
 
-        return response()->json([
-            'status'       => true,
-            'message'      => 'Login successful',
+        $data = [
             'access_token' => $token,
             'expires_in'   => $tokenResult->token->expires_at->diffInSeconds(now()),
             'user_id'      => $user->id,
-        ]);
+        ];
+
+        $responseArray = apiResponse("Success", '', false, $data, 200, $tip, $message);
+        return response()->json($responseArray, 200);
     }
 
     public function signUpWithMobile(Request $request)
@@ -67,7 +73,7 @@ class AuthController extends Controller
             'mobile'  => $request->mobile,
             'otp'     => '666666',
             'role_id' => 2,
-            'cus_id' => generateId('cus')
+            'cus_id'  => generateId('cus'),
         ]);
 
         return response()->json([
@@ -109,4 +115,63 @@ class AuthController extends Controller
         ]);
     }
 
+    public function getUserDetails(Request $request)
+    {
+        $user       = auth()->user();
+        $getPeriods = $user->periods()->latest()->first();
+        $current    = \Carbon\Carbon::parse($getPeriods->ovulation);
+        $fertile_end = \Carbon\Carbon::parse($getPeriods->fertile_window_end);
+
+        // Pregnancy Possibility Range
+        while ($current <= $fertile_end) {
+            $pregnancy_chance_days[] = $current->toDateString();
+            $current->addDay();
+        }
+
+        $data = [
+            'id'                    => $user->id,
+            'name'                  => $user->name,
+            'mobile'                => $user->mobile,
+            'email'                 => $user->email,
+            'image'                 => $user->image,
+            'status'                => $user->status ? 'Active' : 'Inactive',
+            'cus_id'                => $user->cus_id,
+            'periods_last_date'     => $getPeriods ? $getPeriods->periods_last_date : null,
+            'periods_end_date'      => $getPeriods ? $getPeriods->periods_end_date : null,
+            'next_period_date'      => $getPeriods ? $getPeriods->next_period_date : null,
+            'ovulation'             => $getPeriods ? $getPeriods->ovulation : null,
+            'fertile_window_start'  => $getPeriods ? $getPeriods->fertile_window_start : null,
+            'fertile_window_end'    => $getPeriods ? $getPeriods->fertile_window_end : null,
+            'cycle_length'          => $getPeriods ? $getPeriods->cycle_length : null,
+            'period_length'         => $getPeriods ? $getPeriods->period_length : null,
+            'flow'                  => $getPeriods ? $getPeriods->flow : null,
+            'cramps_days'           => $getPeriods ? $getPeriods->cramps_days : null,
+            'mood'                  => $getPeriods ? $getPeriods->mood : null,
+            'symptoms'              => $getPeriods ? $getPeriods->symptoms : null,
+            'period_type'           => $getPeriods ? $getPeriods->period_type : null,
+            'period_color'          => $getPeriods ? $getPeriods->period_color : null,
+            'period_intensity'      => $getPeriods ? $getPeriods->period_intensity : null,
+            'period_pain'           => $getPeriods ? $getPeriods->period_pain : null,
+            'period_flow'           => $getPeriods ? $getPeriods->period_flow : null,
+            'period_duration'       => $getPeriods ? $getPeriods->period_duration : null,
+            'period_notes'          => $getPeriods ? $getPeriods->period_notes : null,
+            'pregnancy_chance_days' => $pregnancy_chance_days,
+        ];
+        $responseArray = apiResponse("Success", '', false, $data, 200, "Get User Details", "User details retrieved successfully");
+        return response()->json($responseArray, 200);
+    }
+
+
+    public function logout(Request $request)
+    {
+        $user = auth()->user();
+        if ($user) {
+            $user->token()->revoke();
+            $responseArray = apiResponse("Success", '', false, '', 200, "Logout", "User logged out successfully");
+            return response()->json($responseArray, 200);
+        } else {
+            $responseArray = apiResponse("Failed", '', false, '', 401, "Logout", "Unauthorized");
+            return response()->json($responseArray, 401);
+        }
+    }
 }

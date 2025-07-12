@@ -1,10 +1,9 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\HomePage\CustomerHomePageController;
-
+use App\Http\Controllers\Api\PeriodController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,10 +16,13 @@ use App\Http\Controllers\Api\HomePage\CustomerHomePageController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
+Route::middleware('auth:api')->group(function () {
+    Route::post('/periods', [PeriodController::class, 'store'])->name('add-periods-detail');
+    Route::get('/getUserDetails', [AuthController::class, 'getUserDetails'])->name('get-user-detail');
+    Route::post('/updatePeriodsRection', [PeriodController::class, 'updatePeriodsRection'])->name('update-periods-rection');
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
 
 Route::post('/login-mobile', [AuthController::class, 'loginWithMobile']);
 
@@ -29,9 +31,6 @@ Route::post('/login-mobile', [AuthController::class, 'loginWithMobile']);
 Route::post('/signup', [AuthController::class, 'signUpWithMobile']);
 Route::post('/otp-verification', [AuthController::class, 'otpVerification']);
 
-Route::get('/catgroy-list',[CustomerHomePageController::class,'getCatgorys']);
-Route::get('/products-list',[CustomerHomePageController::class,'getProducts']);
-Route::get('/category-with-products',[CustomerHomePageController::class,'getCategoryWithProducts']);
-
-
-
+Route::get('/catgroy-list', [CustomerHomePageController::class, 'getCatgorys']);
+Route::get('/products-list', [CustomerHomePageController::class, 'getProducts']);
+Route::get('/category-with-products', [CustomerHomePageController::class, 'getCategoryWithProducts']);

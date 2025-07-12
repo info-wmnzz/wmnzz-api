@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use App\Models\Periods as Period;
 
 class User extends Authenticatable
 {
@@ -49,4 +50,12 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Get the periods associated with the user.
+     */
+    public function periods()
+    {
+        return $this->hasMany(Period::class, 'user_id', 'id');
+    }
 }
