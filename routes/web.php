@@ -16,9 +16,13 @@ use App\Http\Controllers\Admin\CategoryController;
 |
 */
 
-Route::get('/', function () {
+Route::get('/login', function () {
     return view('admin.auth.login');
-});
+})->name('admin.login');
+
+Route::get('/', function () {
+    return view('landingPage');
+});;
 
 
 Route::get('/admin/dashboard', function () {
