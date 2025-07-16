@@ -45,6 +45,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'expires_in'   => $tokenResult->token->expires_at->diffInSeconds(now()),
             'user_id'      => $user->id,
+            'is_new_user' => $user->mobile_verified_at ? 1 : 0,
         ];
 
         $responseArray = apiResponse("Success", '', false, $data, 200, $tip, $message);
@@ -60,13 +61,15 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['status' => false, 'message' => $validator->errors()->first()], 422);
+            $responseArray = apiResponse("Failed", $validator, false, "", 422, "Sign Up");
+            return response()->json($responseArray, 422);
         }
 
         $user = User::where('mobile', $request->mobile)->count();
 
         if ($user > 0) {
-            return response()->json(['status' => false, 'message' => 'Mobile number already taken'], 422);
+           $responseArray = apiResponse("Failed", '', false, '', 409, "Sign Up", "Mobile number already exists");
+            return response()->json($responseArray, 409);
         }
 
         User::create([
@@ -76,10 +79,8 @@ class AuthController extends Controller
             'cus_id'  => generateId('cus'),
         ]);
 
-        return response()->json([
-            'status'  => true,
-            'message' => 'Otp Sent to register mobile number',
-        ]);
+        $responseArray = apiResponse("Success", '', false, '', 200, "Sign Up", "User registered successfully");
+        return response()->json($responseArray, 200);
     }
 
     public function otpVerification(Request $request)
@@ -88,31 +89,35 @@ class AuthController extends Controller
             'mobile' => ['required', 'regex:/^[6-9]\d{9}$/'],
             'otp'    => ['required'],
         ], [
-            'mobile.regex' => 'Mobile number must be 10 digits and start with 6, 7, 8, or 9.',
+            'mobile.regex' => 'Mobile number must be 10 digits and start with 6, 7, 8, or 9.', 
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['status' => false, 'message' => $validator->errors()->first()], 422);
+            $responseArray = apiResponse("Failed", $validator, false, "", 422, "OTP Verification");
+            return response()->json($responseArray, 422);
         }
 
         $user = User::where('mobile', $request->mobile)->first();
 
         if (! $user) {
-            return response()->json(['status' => false, 'message' => 'User not found.'], 404);
+             $responseArray = apiResponse("Failed", '', false, '', 404, "OTP Verification", "User not found");
+            return response()->json($responseArray, 404);
         }
         if ($user->otp != $request->otp) {
-            return response()->json(['status' => false, 'message' => 'Invalid OTP.'], 401);
+            $responseArray = apiResponse("Failed", '', false, '', 401, "OTP Verification", "Invalid OTP");
+            return response()->json($responseArray, 401);
+
         }
         $user->mobile_verified_at = now();
         $tokenResult              = $user->createToken('MobileLoginToken');
         $token                    = $tokenResult->accessToken;
         $user->otp                = null;
         $user->save();
-        return response()->json([
-            'status'  => true,
-            'message' => 'OTP verified successfully.',
-            'token'   => $token,
-        ]);
+       
+        $responseArray = apiResponse("Success", '', false, [
+            'user_id'      => $user->id,
+        ], 200, "OTP Verification", "OTP verified successfully");
+        return response()->json($responseArray, 200);
     }
 
     public function getUserDetails(Request $request)
@@ -135,6 +140,7 @@ class AuthController extends Controller
         }
         $data = [
             'id'                    => $user->id,
+            'is_new_user'           => $user->mobile_verified_at ? 1 : 0,
             'name'                  => $user->name,
             'mobile'                => $user->mobile,
             'email'                 => $user->email,
@@ -183,7 +189,8 @@ class AuthController extends Controller
     {
         $user = auth()->user();
         if (! $user) {
-            return response()->json(['status' => false, 'message' => 'Unauthorized'], 401);
+           $responseArray = apiResponse("Failed", '', false, '', 401, "Update Profile", "Unauthorized");
+            return response()->json($responseArray, 401);
         }
 
         $validator = Validator::make($request->all(), [
@@ -192,7 +199,8 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['status' => false, 'message' => $validator->errors()->first()], 422);
+           $responseArray = apiResponse("Failed", $validator, false, "", 422, "Update Profile");
+            return response()->json($responseArray, 422);
         }
 
         if ($request->has('image')) {
@@ -207,6 +215,24 @@ class AuthController extends Controller
             $user->save();
         }
 
-        return response()->json(['status' => true, 'message' => 'Profile updated successfully']);
+       $responseArray = apiResponse("Success", '', false, [
+            'user_id' => $user->id,
+            'image'   => $user->image,
+            'mobile'  => $user->mobile,
+        ], 200, "Update Profile", "Profile updated successfully");
+        return response()->json($responseArray, 200);
+    }
+
+    public function deleteAccount(Request $request)
+    {
+        $user = auth()->user();
+        if (! $user) {
+           $responseArray = apiResponse("Failed", '', false, '', 401, "Delete Account", "Unauthorized");
+            return response()->json($responseArray, 401);
+        }
+        $user->clearMediaCollection('userprofile');
+        $user->delete();
+        $responseArray = apiResponse("Success", '', false, '', 200, "Delete Account", "Account deleted successfully");
+        return response()->json($responseArray, 200);
     }
 }

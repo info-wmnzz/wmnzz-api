@@ -23,6 +23,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/updatePeriodsRection', [PeriodController::class, 'updatePeriodsRection'])->name('update-periods-rection');
     Route::post('/updateProfile', [AuthController::class, 'updateProfile'])->name('update-profile');
     Route::get('/periodsHistory', [PeriodController::class, 'previousPeriods'])->name('periods-history');
+    Route::post('/delteAccount', [AuthController::class, 'deleteAccount'])->name('delete-account');
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
