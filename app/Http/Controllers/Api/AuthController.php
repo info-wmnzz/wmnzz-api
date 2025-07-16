@@ -117,9 +117,9 @@ class AuthController extends Controller
 
     public function getUserDetails(Request $request)
     {
-        $user       = auth()->user();
-        $getPeriods = $user->periods()->latest()->first();
-        $current    = \Carbon\Carbon::parse($getPeriods->ovulation);
+        $user        = auth()->user();
+        $getPeriods  = $user->periods()->latest()->first();
+        $current     = \Carbon\Carbon::parse($getPeriods->ovulation);
         $fertile_end = \Carbon\Carbon::parse($getPeriods->fertile_window_end);
 
         // Pregnancy Possibility Range
@@ -128,6 +128,11 @@ class AuthController extends Controller
             $current->addDay();
         }
 
+        if ($user->image) {
+            $user->image = $user->getFirstMediaUrl('userprofile', 'thumb');
+        } else {
+            $user->image = null;
+        }
         $data = [
             'id'                    => $user->id,
             'name'                  => $user->name,
@@ -161,7 +166,6 @@ class AuthController extends Controller
         return response()->json($responseArray, 200);
     }
 
-
     public function logout(Request $request)
     {
         $user = auth()->user();
@@ -173,5 +177,36 @@ class AuthController extends Controller
             $responseArray = apiResponse("Failed", '', false, '', 401, "Logout", "Unauthorized");
             return response()->json($responseArray, 401);
         }
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+        if (! $user) {
+            return response()->json(['status' => false, 'message' => 'Unauthorized'], 401);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'mobile' => ['nullable', 'string', 'max:255'],
+            'image'  => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'message' => $validator->errors()->first()], 422);
+        }
+
+        if ($request->has('image')) {
+            $user->addMediaFromRequest('image')->toMediaCollection('userprofile');
+        }
+        if ($request->has('mobile')) {
+            $user->mobile = $request->mobile;
+        }
+        $media = $user->getFirstMedia('userprofile');
+        if ($media) {
+            $user->image = $media->getUrl();
+            $user->save();
+        }
+
+        return response()->json(['status' => true, 'message' => 'Profile updated successfully']);
     }
 }

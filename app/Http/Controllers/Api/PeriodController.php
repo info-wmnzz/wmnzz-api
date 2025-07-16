@@ -98,4 +98,17 @@ class PeriodController extends Controller
         }
 
     }
+
+    public function previousPeriods(Request $request)
+    {
+        $user    = auth()->user();
+        $today   = Carbon::today();
+        $periods = Period::where('user_id', $user->id)
+            ->where('periods_last_date', '<', $today)
+            ->orderBy('periods_last_date', 'desc')
+            ->paginate(10);
+        $responseArray = apiResponse("Success", '', true, $periods, 200, "Previous Periods", "Previous periods retrieved successfully");
+        return response()->json($responseArray, 200);
+    }
+
 }
