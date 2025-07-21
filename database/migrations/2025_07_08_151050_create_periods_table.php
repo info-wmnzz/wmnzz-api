@@ -17,8 +17,6 @@ return new class extends Migration
             $table->date('periods_end_date');
             $table->tinyInteger('status')->default(1);
             $table->string('cramps_days')->nullable(); // Number of days with cramps
-            $table->string('mood')->nullable();
-            $table->string('symptoms')->nullable();
             $table->integer('cycle_length')->default(28);
             $table->integer('period_length')->default(5);  
             $table->integer('flow')->default(0);
@@ -37,6 +35,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->integer('created_by')->unsigned()->nullable();
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
     }

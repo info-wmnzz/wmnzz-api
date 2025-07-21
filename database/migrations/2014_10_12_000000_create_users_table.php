@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('role_id');
             $table->tinyInteger('status')->default(1)->comment('1-Active,0-Inactive');
             $table->string('image')->nullable();
+            $table->timestamp('deleted_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

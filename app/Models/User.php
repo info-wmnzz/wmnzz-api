@@ -10,11 +10,12 @@ use Laravel\Passport\HasApiTokens;
 use App\Models\Periods as Period;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\SoftDeletes;
  
 
 class User extends Authenticatable implements HasMedia
 {
-    use HasApiTokens, HasFactory, Notifiable,InteractsWithMedia;
+    use HasApiTokens, HasFactory, Notifiable,InteractsWithMedia,Softdeletes;
 
     /**
      * The attributes that are mass assignable.

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use \App\Models\Periods as Period;
+use App\Models\PeriodsReaction;
 
 class PeriodController extends Controller
 {
@@ -85,11 +86,14 @@ class PeriodController extends Controller
                     $responseArray = apiResponse("Failed", "Period not found", false, '', 404);
                     return response()->json($responseArray, 404);
                 }
-                $period->mood     = $request->input('mood', $period->mood);
-                $period->symptoms = $request->input('symptoms', $period->symptoms);
-                $period->save();
+                $periods_reaction = new PeriodsReaction();
+                $periods_reaction->period_id = $period->id;
+                $periods_reaction->mood     = $request->input('mood');
+                $periods_reaction->symptoms = $request->input('symptoms');
+                $periods_reaction->flow     = $request->input('flow', 0);
+                $periods_reaction->save();
                 DB::commit();
-                $responseArray = apiResponse("Success", '', false, $period, 200, "Update Periods Reaction", "Periods reaction updated successfully");
+                $responseArray = apiResponse("Success", '', false, '', 200, "Update Periods Reaction", "Periods reaction updated successfully");
                 return response()->json($responseArray, 200);
             } catch (\Exception $ex) {
                 $responseArray = apiResponse("Failed", $ex, false, '', 500);
