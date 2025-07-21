@@ -88,12 +88,12 @@ class AuthController extends Controller
 
         $tokenResult = $user->createToken('MobileLoginToken');
         $token       = $tokenResult->accessToken;
-
+        $newUser = $user->wasRecentlyCreated ? 1 : 0;
         $data = [
             'access_token' => $token,
             'expires_in'   => $tokenResult->token->expires_at->diffInSeconds(now()),
             'user_id'      => $user->id,
-            'is_new_user'  => $userCount == 1 ? 1 : 0,
+            'is_new_user'  => $newUser,
         ];
 
         $responseArray = apiResponse("Success", '', false, $data, 200, "Sign Up", "User Sign up successfully");
