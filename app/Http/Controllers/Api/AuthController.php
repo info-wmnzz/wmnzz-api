@@ -69,7 +69,7 @@ class AuthController extends Controller
             ->whereNotNull('deleted_at')
             ->count();
         if ($userCount > 0) {
-           $user = User::withTrashed()
+            $user = User::withTrashed()
                 ->where('mobile', $request->mobile)
                 ->first();
             $user->restore();
@@ -88,8 +88,8 @@ class AuthController extends Controller
 
         $tokenResult = $user->createToken('MobileLoginToken');
         $token       = $tokenResult->accessToken;
-        $newUser = $user->wasRecentlyCreated ? 1 : 0;
-        $data = [
+        $newUser     = $user->wasRecentlyCreated ? 1 : 0;
+        $data        = [
             'access_token' => $token,
             'expires_in'   => $tokenResult->token->expires_at->diffInSeconds(now()),
             'user_id'      => $user->id,
@@ -139,15 +139,17 @@ class AuthController extends Controller
 
     public function getUserDetails(Request $request)
     {
-        $user        = auth()->user();
-        $getPeriods  = $user->periods()->latest()->first();
-        $current     = \Carbon\Carbon::parse($getPeriods->ovulation);
-        $fertile_end = \Carbon\Carbon::parse($getPeriods->fertile_window_end);
-
-        // Pregnancy Possibility Range
-        while ($current <= $fertile_end) {
-            $pregnancy_chance_days[] = $current->toDateString();
-            $current->addDay();
+        $user                  = auth()->user();
+        $getPeriods            = $user->periods()->latest()->first();
+        $pregnancy_chance_days = [];
+        if (! empty($getPeriods)) {
+            $current     = \Carbon\Carbon::parse($getPeriods->ovulation);
+            $fertile_end = \Carbon\Carbon::parse($getPeriods->fertile_window_end);
+            // Pregnancy Possibility Range
+            while ($current <= $fertile_end) {
+                $pregnancy_chance_days[] = $current->toDateString();
+                $current->addDay();
+            }
         }
 
         if ($user->image) {
