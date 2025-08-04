@@ -169,7 +169,7 @@ class AuthController extends Controller
             'periods_last_date'     => $getPeriods ? $getPeriods->periods_last_date : null,
             'periods_end_date'      => $getPeriods ? $getPeriods->periods_end_date : null,
             'next_period_date'      => $getPeriods ? $getPeriods->next_period_date : null,
-            'ovulation'             => $getPeriods ? $getPeriods->ovulation : null,
+            'ovulation_date'        => $getPeriods ? $getPeriods->ovulation : null,
             'fertile_window_start'  => $getPeriods ? $getPeriods->fertile_window_start : null,
             'fertile_window_end'    => $getPeriods ? $getPeriods->fertile_window_end : null,
             'cycle_length'          => $getPeriods ? $getPeriods->cycle_length : null,

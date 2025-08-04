@@ -42,14 +42,14 @@ class PeriodController extends Controller
                 $periods_end_date  = Carbon::parse($period->periods_end_date);
                 $cycle_length      = 28;
 
-                $next_period_date = $periods_last_date->addDays($cycle_length);
+                $next_period_date = $periods_end_date->addDays($cycle_length);
 
                 $ovulation_date = $next_period_date->copy()->subDays(14);
 
                 $fertile_start                = $ovulation_date->copy()->subDays(5);
                 $fertile_end                  = $ovulation_date->copy()->addDay();
                 $period->periods_last_date    = $periods_last_date->subDays($cycle_length);
-                $period->periods_end_date     = $periods_end_date;
+                $period->periods_end_date     = Carbon::parse($period->periods_end_date);
                 $period->next_period_date     = $next_period_date;
                 $period->ovulation            = $ovulation_date;
                 $period->fertile_window_start = $fertile_start;
