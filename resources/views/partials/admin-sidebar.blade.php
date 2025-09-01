@@ -62,18 +62,18 @@
         </li>
 
         <li class="item">
-          <a href="#">
+          <a href="{{ route('admin.users.index') }}">
             <i class="fas fa-layer-group"></i>
-            <span class="item-text">Product</span>
-            <span class="item-tooltip">Product</span>
+            <span class="item-text">Customer</span>
+            <span class="item-tooltip">Customer</span>
           </a>
         </li>
 
          <li class="item">
-          <a href="#">
-            <i class="fas fa-store"></i>
-            <span class="item-text">Seller</span>
-            <span class="item-tooltip">Seller</span>
+          <a href="{{ route('admin.settings.index') }}">
+            <i class="fas fa-cog"></i>
+            <span class="item-text">Setting</span>
+            <span class="item-tooltip">Setting</span>
           </a>
         </li>
 

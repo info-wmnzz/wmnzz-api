@@ -85,6 +85,9 @@ class AuthController extends Controller
                 ]
             );
         }
+        $user->device_id = $request->device_id ?? null;
+        $user->fcm_token = $request->fcm_token ?? null;
+        $user->save();
 
         $tokenResult = $user->createToken('MobileLoginToken');
         $token       = $tokenResult->accessToken;
@@ -157,8 +160,22 @@ class AuthController extends Controller
         } else {
             $user->image = null;
         }
+        $hour = now()->setTimezone('Asia/Kolkata')->hour;
+
+        if ($hour < 12) {
+            $greeting = 'Good Morning';
+        } elseif ($hour < 17) {
+            $greeting = 'Good Afternoon';
+        } elseif ($hour < 21) {
+            $greeting = 'Good Evening';
+        } else {
+            $greeting = 'Good Night';
+        }
+
         $data = [
             'id'                    => $user->id,
+            'greeting'              => $greeting,
+            'terms_conditions'      => env('APP_URL') . '/termsAndCondition',
             'is_new_user'           => $user->mobile_verified_at ? 1 : 0,
             'name'                  => $user->name,
             'mobile'                => $user->mobile,
