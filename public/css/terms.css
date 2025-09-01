@@ -1,0 +1,225 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", Arial, sans-serif;
+}
+
+body {
+    background: #fff;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Header Section */
+.header {
+    background: linear-gradient(to bottom, #E1206B, #E28DAE);
+    color: white;
+    padding: 2.5rem 1.5rem;
+    /* border-radius: 0 0 25px 25px; */
+    /* text-align: center; */
+    position: relative;
+}
+
+.header h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+}
+
+.header p {
+    font-size: 0.95rem;
+    opacity: 0.95;
+}
+
+/* Back Button (optional left arrow) */
+.back-btn {
+    position: absolute;
+    left: 15px;
+    top: 10px;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+/* Privacy Policy Link (replaces ? icon) */
+.privacy-link {
+    position: absolute;
+    right: 15px;
+    top: 20px;
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: #fff;
+    text-decoration: none;
+    /* background: rgba(255, 255, 255, 0.2); */
+    padding: 6px 12px;
+    border-radius: 20px;
+    transition: 0.3s;
+}
+
+/* .privacy-link:hover {
+    background: rgba(255, 255, 255, 0.35);
+  } */
+
+/* Content Section */
+.content {
+    padding: 1.5rem;
+}
+
+.content h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.3rem;
+}
+
+.content small {
+    display: block;
+    font-size: 0.85rem;
+    color: #E28DAE;
+    margin-bottom: 1rem;
+}
+
+.content p {
+    font-size: 0.95rem;
+    margin: 0.5rem 0 1rem;
+    color: #444;
+}
+
+.content strong {
+    display: block;
+    font-size: 1rem;
+    margin-top: 1.2rem;
+    margin-bottom: 0.3rem;
+    color: #000;
+}
+
+/* ========= RESPONSIVE DESIGN ========= */
+
+/* Small devices (phones, <600px) */
+@media (max-width: 600px) {
+    .header {
+        padding: 2rem 1rem;
+    }
+
+    .header h2 {
+        font-size: 24px;
+    }
+
+    .header p {
+        font-size: 16px;
+    }
+
+    .privacy-link {
+        font-size: 14px;
+        padding: 4px 10px;
+        top: 15px;
+    }
+
+    .content {
+        padding: 1rem;
+    }
+
+    .content h3 {
+        font-size: 20px;
+    }
+
+    .content p,
+    .content strong,
+    .content small {
+        font-size: 14px;
+    }
+}
+
+/* Medium devices (tablets, 600px–900px) */
+@media (min-width: 601px) and (max-width: 900px) {
+    .header {
+        padding: 2.5rem 2rem;
+    }
+
+    .header h2 {
+        font-size: 1.6rem;
+    }
+
+    .header p {
+        font-size: 0.95rem;
+    }
+
+    .privacy-link {
+        font-size: 0.9rem;
+        top: 18px;
+    }
+
+    .content {
+        padding: 1.5rem 2rem;
+    }
+
+    .content h3 {
+        font-size: 1.3rem;
+    }
+
+    .content p,
+    .content strong,
+    .content small {
+        font-size: 0.95rem;
+    }
+}
+
+/* Large devices (laptops, 900px–1200px) */
+@media (min-width: 901px) and (max-width: 1200px) {
+    .header {
+        padding: 3rem 3rem;
+    }
+
+    .header h2 {
+        font-size: 1.8rem;
+    }
+
+    .header p {
+        font-size: 1rem;
+    }
+
+    .content {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .content h3 {
+        font-size: 1.4rem;
+    }
+
+    .content p,
+    .content strong,
+    .content small {
+        font-size: 1rem;
+    }
+}
+
+/* Extra-large devices (desktops, >1200px) */
+@media (min-width: 1201px) {
+    .header {
+        padding: 3.5rem 4rem;
+    }
+
+    .header h2 {
+        font-size: 2rem;
+    }
+
+    .header p {
+        font-size: 1.1rem;
+    }
+
+    .content {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2.5rem 3rem;
+    }
+
+    .content h3 {
+        font-size: 1.6rem;
+    }
+
+    .content p,
+    .content strong,
+    .content small {
+        font-size: 1.05rem;
+    }
+}
