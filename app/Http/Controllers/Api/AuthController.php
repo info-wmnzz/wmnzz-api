@@ -145,13 +145,53 @@ class AuthController extends Controller
         $user                  = auth()->user();
         $getPeriods            = $user->periods()->latest()->first();
         $pregnancy_chance_days = [];
+        $ovulation_status      = null;
+        $upcoming_periods      = null;
+        $pregnancy_chance      = "Low";
+
         if (! empty($getPeriods)) {
             $current     = \Carbon\Carbon::parse($getPeriods->ovulation);
             $fertile_end = \Carbon\Carbon::parse($getPeriods->fertile_window_end);
-            // Pregnancy Possibility Range
             while ($current <= $fertile_end) {
                 $pregnancy_chance_days[] = $current->toDateString();
                 $current->addDay();
+            }
+
+            $ovulationDate = \Carbon\Carbon::parse($getPeriods->ovulation)->startOfDay();
+            $today         = now()->setTimezone('Asia/Kolkata')->startOfDay();
+
+            if ($today->equalTo($ovulationDate)) {
+                $ovulation_status = "On Date";
+            } elseif ($today->lessThan($ovulationDate)) {
+                $ovulation_status = $today->diffInDays($ovulationDate) . " days left";
+            } else {
+                $ovulation_status = $ovulationDate->diffInDays($today) . " days ago";
+            }
+
+            if ($getPeriods->next_period_date) {
+                $nextPeriod = \Carbon\Carbon::parse($getPeriods->next_period_date)->startOfDay();
+                if ($today->equalTo($nextPeriod)) {
+                    $upcoming_periods = "On Date";
+                } elseif ($today->lessThan($nextPeriod)) {
+                    $upcoming_periods = $today->diffInDays($nextPeriod) . " days left";
+                } else {
+                    $upcoming_periods = $nextPeriod->diffInDays($today) . " days ago";
+                }
+            }
+
+            // Pregnancy chance level
+            $fertileStart = \Carbon\Carbon::parse($getPeriods->fertile_window_start)->startOfDay();
+            $fertileEnd   = \Carbon\Carbon::parse($getPeriods->fertile_window_end)->startOfDay();
+
+            if ($today->between($fertileStart, $fertileEnd)) {
+                $pregnancy_chance = "High";
+            } elseif (
+                $today->diffInDays($fertileStart, false) >= -2 &&
+                $today->diffInDays($fertileEnd, false) <= 2
+            ) {
+                $pregnancy_chance = "Medium";
+            } else {
+                $pregnancy_chance = "Low";
             }
         }
 
@@ -160,6 +200,7 @@ class AuthController extends Controller
         } else {
             $user->image = null;
         }
+
         $hour = now()->setTimezone('Asia/Kolkata')->hour;
 
         if ($hour < 12) {
@@ -186,7 +227,9 @@ class AuthController extends Controller
             'periods_last_date'     => $getPeriods ? $getPeriods->periods_last_date : null,
             'periods_end_date'      => $getPeriods ? $getPeriods->periods_end_date : null,
             'next_period_date'      => $getPeriods ? $getPeriods->next_period_date : null,
-            'ovulation_date'        => $getPeriods ? $getPeriods->ovulation : null,
+            'ovulation_date'        => $ovulation_status,
+            'upcoming_periods'      => $upcoming_periods,
+            'pregnancy_chance'      => $pregnancy_chance, // 🔹 Added pregnancy chance
             'fertile_window_start'  => $getPeriods ? $getPeriods->fertile_window_start : null,
             'fertile_window_end'    => $getPeriods ? $getPeriods->fertile_window_end : null,
             'cycle_length'          => $getPeriods ? $getPeriods->cycle_length : null,
@@ -204,6 +247,7 @@ class AuthController extends Controller
             'period_notes'          => $getPeriods ? $getPeriods->period_notes : null,
             'pregnancy_chance_days' => $pregnancy_chance_days,
         ];
+
         $responseArray = apiResponse("Success", '', false, $data, 200, "Get User Details", "User details retrieved successfully");
         return response()->json($responseArray, 200);
     }
@@ -272,7 +316,7 @@ class AuthController extends Controller
         return response()->json($responseArray, 200);
     }
 
-    public function resendOtp(Request $request)
+    public function sendOtp(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'mobile' => ['required', 'regex:/^[6-9]\d{9}$/'],
@@ -281,25 +325,64 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $responseArray = apiResponse("Failed", $validator, false, "", 422, "Resend OTP");
+            $responseArray = apiResponse("Failed", $validator, false, "", 422, "Send OTP");
             return response()->json($responseArray, 422);
         }
 
         $user = User::where('mobile', $request->mobile)->first();
 
         if (! $user) {
-            $responseArray = apiResponse("Failed", '', false, '', 404, "Resend OTP", "User not found");
+            $responseArray = apiResponse("Failed", '', false, '', 404, "Send OTP", "User not found");
             return response()->json($responseArray, 404);
         }
 
         if ($user->mobile_verified_at) {
-            $responseArray = apiResponse("Failed", '', false, '', 409, "Resend OTP", "Mobile number already verified");
+            $responseArray = apiResponse("Failed", '', false, '', 409, "Send OTP", "Mobile number already verified");
             return response()->json($responseArray, 409);
         }
-        $user->otp = '666666';
+        $user->otp = sendSms($request->mobile);
+        $user->mobile_verification_request_time  = now();
         $user->save();
 
-        $responseArray = apiResponse("Success", '', false, '', 200, "Resend OTP", "OTP resent successfully");
+        $responseArray = apiResponse("Success", '', false, '', 200, "Send OTP", "OTP sent successfully");
+        return response()->json($responseArray, 200);
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'mobile' => ['required', 'regex:/^[6-9]\d{9}$/'],
+            'otp'    => ['required', 'digits:6'],
+        ], [
+            'mobile.regex' => 'Mobile number must be 10 digits and start with 6, 7, 8, or 9.',
+        ]);
+
+        if ($validator->fails()) {
+            $responseArray = apiResponse("Failed", $validator, false, "", 422, "Verify OTP");
+            return response()->json($responseArray, 422);
+        }
+
+        $user = User::where('mobile', $request->mobile)->first();
+
+        if (! $user) {
+            $responseArray = apiResponse("Failed", '', false, '', 400, "Verify OTP", "User not found");
+            return response()->json($responseArray, 400);
+        }
+        if ($user->otp != $request->otp) {
+            $responseArray = apiResponse("Failed", '', false, '', 410, "Verify OTP", "Invalid OTP");
+            return response()->json($responseArray, 410);
+
+        }
+        if ($user->mobile_request_verification_time && $user->mobile_request_verification_time->addMinutes(5) < now()) {
+            $responseArray = apiResponse("Failed", '', false, '', 401, "Verify OTP", "OTP expired");
+            return response()->json($responseArray, 401);
+        }
+
+        $user->mobile_verified_at = now();
+        $user->otp                = null;
+        $user->save();
+
+        $responseArray = apiResponse("Success", '', false, '', 200, "Verify OTP", "OTP verified successfully");
         return response()->json($responseArray, 200);
     }
 }

@@ -24,11 +24,14 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/updateProfile', [AuthController::class, 'updateProfile'])->name('update-profile');
     Route::get('/periodsHistory', [PeriodController::class, 'previousPeriods'])->name('periods-history');
     Route::post('/delteAccount', [AuthController::class, 'deleteAccount'])->name('delete-account');
-    Route::post('/resendOtp', [AuthController::class, 'resendOtp'])->name('resend-otp');
+    Route::post('/sendOtp', [AuthController::class, 'sendOtp'])->name('send-otp');
+    Route::post('/verifyOtp', [AuthController::class, 'verifyOtp'])->name('verify-otp');
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 Route::post('/login-mobile', [AuthController::class, 'loginWithMobile']);
+
+Route::post('/send-sms', [AuthController::class, 'sendSms']);
 
 // Register apis
 

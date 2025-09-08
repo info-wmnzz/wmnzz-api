@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Terms & Conditions</title>
   <link rel="stylesheet" href="{{ asset('css/terms.css') }}">
-  <link rel="icon" href="{{ asset('favicon.png') }}" type="image/x-icon">
-
+  <!-- <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"> -->
 </head>
 <body>
  <div class="header">
@@ -21,7 +20,8 @@
 
   <div class="content">
     <h3>📜 Terms and Conditions – WMNZZ</h3>
-    <small>Last Updated on {{ $updatedAt ?? '' }}</small>
+    <small> Effective Date : {{ $updatedAt ?? '' }}</small>
+    <small> Last Updated on {{ $updatedAt ?? '' }}</small>
      {!! $termsContent ?? 'No Terms & Conditions available at the moment.' !!}
   </div>
 </body>

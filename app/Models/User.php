@@ -32,7 +32,9 @@ class User extends Authenticatable implements HasMedia
         'email_verified_at',
         'mobile_verified_at',
         'status',
-        'cus_id'
+        'cus_id',
+        'mobile_verification_request_time',
+        'email_verification_request_time'
     ];
 
     /**

@@ -1,9 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 /* Reset */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Inter", Arial, sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 body {
@@ -51,6 +53,7 @@ body {
 /* Content Section */
 .content {
     padding: 1.5rem;
+    text-align: justify;
 }
 
 .content h3 {
@@ -60,7 +63,7 @@ body {
 
 .content small {
     display: block;
-    font-size: 0.85rem;
+    font-size: 14px;
     color: #E28DAE;
     margin-bottom: 1rem;
 }
@@ -69,6 +72,14 @@ body {
     font-size: 0.95rem;
     margin: 0.5rem 0 1rem;
     color: #444;
+    text-align: justify;
+}
+
+.content li {
+    font-size: 0.95rem;
+    margin: 0.5rem 0 1rem;
+    /* color: #444; */
+    margin-left: 1.5rem;
 }
 
 .content strong {
@@ -76,9 +87,17 @@ body {
     font-size: 1rem;
     margin-top: 1.2rem;
     margin-bottom: 0.3rem;
-    color: #000;
+    color: #212121;
 }
 
+.content b {
+    color: #212121;
+}
+
+.content a {
+    color: #E1206B;
+    text-decoration: none;
+}
 
 /* ========= RESPONSIVE DESIGN ========= */
 
@@ -89,15 +108,15 @@ body {
     }
 
     .header h2 {
-        font-size: 1.3rem;
+        font-size: 24px;
     }
 
     .header p {
-        font-size: 0.85rem;
+        font-size: 16px;
     }
 
     .privacy-link {
-        font-size: 0.8rem;
+        font-size: 14px;
         padding: 4px 10px;
         top: 15px;
     }
@@ -107,13 +126,14 @@ body {
     }
 
     .content h3 {
-        font-size: 1.1rem;
+        font-size: 20px;
     }
 
     .content p,
     .content strong,
-    .content small {
-        font-size: 0.85rem;
+    .content small,
+    .content li {
+        font-size: 14px;
     }
 }
 
@@ -146,7 +166,8 @@ body {
 
     .content p,
     .content strong,
-    .content small {
+    .content small,
+    .content li {
         font-size: 0.95rem;
     }
 }
@@ -210,5 +231,27 @@ body {
     .content strong,
     .content small {
         font-size: 1.05rem;
+    }
+}
+
+/* Dark Mode (automatic if system is in dark mode) */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #212121;
+        /* black background */
+        color: rgb(241, 234, 234);
+        /* white text */
+    }
+
+    .content p,
+    .content strong,
+    .content small,
+    .content b {
+        color: rgb(241, 234, 234);
+        /* override paragraph, headings, small text */
+    }
+
+    .content small {
+        color: #E28DAE;
     }
 }
