@@ -1,36 +1,53 @@
 <?php
-
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Aws\Sns\SnsClient;
 
 class FirebaseService
 {
-    protected $serverKey;
+    protected $sns;
 
     public function __construct()
     {
-        $this->serverKey = env('FIREBASE_SERVER_KEY');
+        $this->sns = new SnsClient([
+            'credentials' => [
+                'key'    => env('AWS_ACCESS_KEY_ID'),
+                'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            ],
+            'region'      => 'ap-south-1',
+            'version'     => 'latest',
+        ]);
     }
 
-    public function sendNotification($deviceToken, $title, $body)
+    public function sendNotification($targetArn, $message, $title = 'New Notification')
     {
-        $url = 'https://fcm.googleapis.com/fcm/send';
-
-        $data = [
-            "to" => $deviceToken,  // Device token of the target device
-            "notification" => [
-                "title" => $title,
-                "body" => $body,
-            ],
-            "priority" => "high"
+        $payload = [
+            'default' => $message,
+            'GCM'     => json_encode([
+                'notification' => [
+                    'title' => $title,
+                    'body'  => $message,
+                ],
+                'data'         => [
+                    'extra' => 'value_here',
+                ],
+            ]),
+            'APNS'    => json_encode([
+                'aps' => [
+                    'alert' => [
+                        'title' => $title,
+                        'body'  => $message,
+                    ],
+                    'sound' => 'default',
+                ],
+            ]),
         ];
 
-        $response = Http::withHeaders([
-            'Authorization' => 'key=' . $this->serverKey,
-            'Content-Type' => 'application/json',
-        ])->post($url, $data);
-
-        return $response->body();
+        return $this->sns->publish([
+            'TargetArn'        => $targetArn, // device endpoint ARN from SNS
+            'MessageStructure' => 'json',
+            'Message'          => json_encode($payload),
+        ]);
     }
 }

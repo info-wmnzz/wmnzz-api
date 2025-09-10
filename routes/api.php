@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\HomePage\CustomerHomePageController;
 use App\Http\Controllers\Api\PeriodController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,8 @@ Route::middleware('auth:api')->group(function () {
 Route::post('/login-mobile', [AuthController::class, 'loginWithMobile']);
 
 Route::post('/send-sms', [AuthController::class, 'sendSms']);
+
+Route::post('/send-notification', [NotificationController::class, 'send']);
 
 // Register apis
 
