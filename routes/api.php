@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\HomePage\CustomerHomePageController;
 use App\Http\Controllers\Api\PeriodController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Api\Seller\SellerProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +18,6 @@ use App\Http\Controllers\Admin\NotificationController;
 |
 */
 
-
 Route::middleware('auth:api')->group(function () {
     Route::post('/periods', [PeriodController::class, 'store'])->name('add-periods-detail');
     Route::get('/getUserDetails', [AuthController::class, 'getUserDetails'])->name('get-user-detail');
@@ -28,6 +28,10 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/sendOtp', [AuthController::class, 'sendOtp'])->name('send-otp');
     Route::post('/verifyOtp', [AuthController::class, 'verifyOtp'])->name('verify-otp');
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::prefix('seller')->as('seller.')->group(function () {
+        Route::apiResource('products', SellerProductController::class);
+    });
 });
 
 Route::post('/login-mobile', [AuthController::class, 'loginWithMobile']);
