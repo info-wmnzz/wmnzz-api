@@ -12,6 +12,7 @@ class SellerProducts extends Model
     protected $fillable = [
         'product_id',
         'category_id',
+        'seller_id',
         'name',
         'slug',
         'desc',
@@ -22,4 +23,14 @@ class SellerProducts extends Model
         'mrp_price',
         'stock',
     ];
+
+    public function seller()
+    {
+        return $this->belongsTo(User::class, 'seller_id');
+    }
+
+    public function businessDetail()
+    {
+        return $this->hasOne(SellerBusinessDetail::class, 'seller_id', 'seller_id');
+    }
 }

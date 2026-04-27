@@ -48,8 +48,9 @@ class FileUploadService
         if (! $path) {
             return null;
         }
-        if ($this->disk == 'local') {
-            return env('APP_URL').Storage::disk($this->disk)->url($path);
+
+        if (filter_var($path, FILTER_VALIDATE_URL)) {
+            return $path;
         }
 
         return Storage::disk($this->disk)->url($path);

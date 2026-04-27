@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('seller_products', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('category_id')->nullable();
+            $table->unsignedBigInteger('seller_id')->index();
             $table->string('name', 100)->nullable();
             $table->string('brand_name')->nullable();
             $table->string('slug', 100)->nullable()->unique()->index();
@@ -27,6 +28,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
+            $table->foreign('seller_id')->references('id')->on('users')->onDelete('set null');
+
 
         });
     }

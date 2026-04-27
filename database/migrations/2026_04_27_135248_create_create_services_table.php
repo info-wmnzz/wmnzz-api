@@ -11,24 +11,33 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('seller_business_details', function (Blueprint $table) {
+        Schema::create('create_services', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('seller_id');
-            $table->string('store_name');
+
+            $table->unsignedBigInteger('service_provider_id')->nullable();
+
+            $table->string('service_title');
+            $table->string('service_category');
+            $table->string('city_of_operation');
+            $table->text('service_desc');
+
+            $table->decimal('price', 10, 2);
+            $table->integer('experience');
+
             $table->string('image')->nullable();
-            $table->string('business_category');
-            $table->string('gst_number', 15)->nullable();
-            $table->string('cin', 21)->nullable();
-            $table->string('store_email')->unique();
-            $table->string('store_phone', 15);
-            $table->text('business_address')->nullable();
+            $table->string('status')->default(0);
+
+            $table->text('service_provider_address')->nullable();
             $table->string('city')->nullable();
             $table->string('pincode', 10)->nullable();
+
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
+
             $table->timestamps();
 
-            $table->foreign('seller_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('service_provider_id')->references('id')->on('users')->onDelete('set null');
+
         });
     }
 
@@ -37,6 +46,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('seller_business_details');
+        Schema::dropIfExists('create_services');
     }
 };

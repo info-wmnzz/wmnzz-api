@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\SellerProducts;
 use App\Services\FileUploadService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -20,11 +22,21 @@ class SellerProductController extends Controller
     {
         $tip = 'Product List';
         $message = 'Products fetched successfully';
+        $user = Auth::user();
 
-        $products = SellerProducts::latest()->get();
+        $products = SellerProducts::with([
+            'businessDetail:id,seller_id,store_name,store_phone,store_email,business_category,image',
+        ])->where('seller_id', $user->id)
+            ->latest()
+            ->get();
 
         $products->transform(function ($product) use ($fileService) {
             $product->image = $fileService->getUrl($product->image);
+
+            if ($product->businessDetail && $product->businessDetail->image) {
+                // print_r($product->businessDetail->image);exit;
+                $product->businessDetail->image = $fileService->getUrl($product->businessDetail->image);
+            }
 
             return $product;
         });
@@ -69,6 +81,7 @@ class SellerProductController extends Controller
 
         try {
             $imagePath = null;
+            $user = Auth::user();
 
             if ($request->hasFile('image')) {
                 $upload = $fileService->upload($request->file('image'), 'products');
@@ -77,6 +90,7 @@ class SellerProductController extends Controller
 
             $product = SellerProducts::create([
                 'category_id' => $request->category_id,
+                'seller_id' => $user->id,
                 'name' => $request->name,
                 'slug' => Str::slug($request->name),
                 'desc' => $request->desc,
@@ -180,7 +194,7 @@ class SellerProductController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            $responseArray = apiResponse('Failed', $ex, false, '', 500, $tip);
+            $responseArray = apiResponse('Failed', $e, false, '', 500, $tip);
 
             return response()->json($responseArray, 500);
         }
@@ -215,7 +229,7 @@ class SellerProductController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            $responseArray = apiResponse('Failed', $ex, false, '', 500, $tip);
+            $responseArray = apiResponse('Failed', $e, false, '', 500, $tip);
 
             return response()->json($responseArray, 500);
         }

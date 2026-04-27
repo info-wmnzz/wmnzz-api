@@ -4,8 +4,10 @@ use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\HomePage\CustomerHomePageController;
 use App\Http\Controllers\Api\PeriodController;
+use App\Http\Controllers\Api\Seller\SellerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Seller\SellerProductController;
+use App\Http\Controllers\ServiceProviderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,9 +31,9 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/verifyOtp', [AuthController::class, 'verifyOtp'])->name('verify-otp');
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::prefix('seller')->as('seller.')->group(function () {
-        Route::apiResource('products', SellerProductController::class);
-    });
+    //Assign role
+    Route::post('/assignRole', [AuthController::class, 'assignRole']);
+    
 });
 
 Route::post('/login-mobile', [AuthController::class, 'loginWithMobile']);
@@ -48,3 +50,18 @@ Route::post('/otp-verification', [AuthController::class, 'otpVerification']);
 Route::get('/catgroy-list', [CustomerHomePageController::class, 'getCatgorys']);
 Route::get('/products-list', [CustomerHomePageController::class, 'getProducts']);
 Route::get('/category-with-products', [CustomerHomePageController::class, 'getCategoryWithProducts']);
+
+//Roles
+Route::get('/getRoles', [AuthController::class, 'getRoles']);
+
+//Seller Routes
+
+Route::prefix('seller')->as('seller.')->middleware(['auth:api', 'isSeller'])->group(function () {
+    Route::apiResource('products', SellerProductController::class);
+    Route::post('/updateBusinessDetails',[SellerController::class,'updateBusinessDetails']);
+});
+
+//Serice Provider
+Route::prefix('service')->as('service.')->middleware(['auth:api', 'isServiceProvider'])->group(function () {
+    Route::apiResource('services', ServiceProviderController::class);
+});

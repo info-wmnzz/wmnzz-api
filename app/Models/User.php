@@ -3,19 +3,18 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Periods as Period;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
-use App\Models\Periods as Period;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
- 
 
 class User extends Authenticatable implements HasMedia
 {
-    use HasApiTokens, HasFactory, Notifiable,InteractsWithMedia,Softdeletes;
+    use HasApiTokens, HasFactory, InteractsWithMedia,Notifiable,Softdeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -34,7 +33,7 @@ class User extends Authenticatable implements HasMedia
         'status',
         'cus_id',
         'mobile_verification_request_time',
-        'email_verification_request_time'
+        'email_verification_request_time',
     ];
 
     /**
@@ -63,5 +62,25 @@ class User extends Authenticatable implements HasMedia
     public function periods()
     {
         return $this->hasMany(Period::class, 'user_id', 'id');
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    public function isSeller()
+    {
+        return $this->role && $this->role->role_slug === 'seller';
+    }
+
+    public function businessDetail()
+    {
+        return $this->hasOne(SellerBusinessDetail::class, 'seller_id');
+    }
+
+    public function isServiceProvider()
+    {
+        return $this->role && $this->role->role_slug === 'service_provider';
     }
 }
