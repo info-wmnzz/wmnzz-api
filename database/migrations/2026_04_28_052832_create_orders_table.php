@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('payment_method')->nullable();
             $table->timestamps();
 
-            $table->foreign('customer_id')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

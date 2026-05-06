@@ -36,7 +36,7 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->foreign('service_provider_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('service_provider_id')->references('id')->on('users')->onDelete('cascade');
 
         });
     }

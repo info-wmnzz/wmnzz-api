@@ -27,8 +27,8 @@ return new class extends Migration
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
 
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
-            $table->foreign('seller_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreign('seller_id')->references('id')->on('users')->onDelete('cascade');
 
 
         });
