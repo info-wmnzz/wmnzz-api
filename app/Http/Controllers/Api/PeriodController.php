@@ -27,7 +27,7 @@ class PeriodController extends Controller
             return response()->json($responseArray, 422);
         } else {
             try {
-                \DB::beginTransaction();
+                DB::beginTransaction();
 
                 $period                    = new Period();
                 $validatedData             = $validator->validated();

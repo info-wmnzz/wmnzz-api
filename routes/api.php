@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\Customer\OrderController;
 use App\Http\Controllers\Api\HomePage\CustomerHomePageController;
 use App\Http\Controllers\Api\PeriodController;
 use App\Http\Controllers\Api\Seller\SellerController;
@@ -64,4 +65,14 @@ Route::prefix('seller')->as('seller.')->middleware(['auth:api', 'isSeller'])->gr
 //Serice Provider
 Route::prefix('service')->as('service.')->middleware(['auth:api', 'isServiceProvider'])->group(function () {
     Route::apiResource('services', ServiceProviderController::class);
+});
+
+//Customer
+Route::prefix('customer')->as('customer.')->group(function () {
+    Route::get('/viewAllProduct',[OrderController::class,'viewAllProduct']);
+    Route::get('/viewAllServices',[OrderController::class,'viewAllServices']);
+    Route::post('/bookService',[OrderController::class,'bookService']);
+
+    Route::post('/placeOrder',[OrderController::class,'placeOrder']);
+    Route::post('/addToCart',[OrderController::class,'addToCart']);
 });

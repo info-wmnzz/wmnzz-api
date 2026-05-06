@@ -25,4 +25,9 @@ class CreateService extends Model
         'longitude',
         'status'
     ];
+
+    public function serviceProviderDetail()
+    {
+        return $this->hasOne(User::class, 'id','service_provider_id');
+    }
 }

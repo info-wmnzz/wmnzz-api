@@ -24,20 +24,12 @@ class SellerProductController extends Controller
         $message = 'Products fetched successfully';
         $user = Auth::user();
 
-        $products = SellerProducts::with([
-            'businessDetail:id,seller_id,store_name,store_phone,store_email,business_category,image',
-        ])->where('seller_id', $user->id)
+        $products = SellerProducts::where('seller_id', $user->id)
             ->latest()
             ->get();
 
         $products->transform(function ($product) use ($fileService) {
             $product->image = $fileService->getUrl($product->image);
-
-            if ($product->businessDetail && $product->businessDetail->image) {
-                // print_r($product->businessDetail->image);exit;
-                $product->businessDetail->image = $fileService->getUrl($product->businessDetail->image);
-            }
-
             return $product;
         });
 

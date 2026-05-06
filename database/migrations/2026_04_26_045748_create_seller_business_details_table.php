@@ -28,7 +28,7 @@ return new class extends Migration
             $table->decimal('longitude', 10, 7)->nullable();
             $table->timestamps();
 
-            $table->foreign('seller_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('seller_id')->references('id')->on('users')->nullOnDelete();
         });
     }
 
