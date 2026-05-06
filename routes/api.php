@@ -21,6 +21,10 @@ use App\Http\Controllers\ServiceProviderController;
 |
 */
 
+Route::get('/test', function () {
+    return response()->json(['msg' => 'API working']);
+});
+
 Route::middleware('auth:api')->group(function () {
     Route::post('/periods', [PeriodController::class, 'store'])->name('add-periods-detail');
     Route::get('/getUserDetails', [AuthController::class, 'getUserDetails'])->name('get-user-detail');
