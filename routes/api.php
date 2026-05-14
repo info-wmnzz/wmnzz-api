@@ -33,7 +33,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/periodsHistory', [PeriodController::class, 'previousPeriods'])->name('periods-history');
     Route::post('/delteAccount', [AuthController::class, 'deleteAccount'])->name('delete-account');
     Route::post('/sendOtp', [AuthController::class, 'sendOtp'])->name('send-otp');
-    Route::post('/verifyOtp', [AuthController::class, 'verifyOtp'])->name('verify-otp');
+    // Route::post('/verifyOtp', [AuthController::class, 'verifyOtp'])->name('verify-otp');
     Route::post('/logout', [AuthController::class, 'logout']);
 
     //Assign role

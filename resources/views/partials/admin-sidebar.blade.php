@@ -53,29 +53,29 @@
           </a>
         </li>
 
-        <li class="item">
+        {{-- <li class="item">
           <a href="{{ route('admin.categories.index') }}">
             <i class="fa-solid fas fa-box"></i>
             <span class="item-text">Category</span>
             <span class="item-tooltip">Category</span>
           </a>
-        </li>
+        </li> --}}
 
-        <li class="item">
+        {{-- <li class="item">
           <a href="{{ route('admin.users.index') }}">
             <i class="fas fa-layer-group"></i>
             <span class="item-text">Customer</span>
             <span class="item-tooltip">Customer</span>
           </a>
-        </li>
+        </li> --}}
 
-         <li class="item">
+         {{-- <li class="item">
           <a href="{{ route('admin.settings.index') }}">
             <i class="fas fa-cog"></i>
             <span class="item-text">Setting</span>
             <span class="item-tooltip">Setting</span>
           </a>
-        </li>
+        </li> --}}
 
         <li class="item">
           <a href="{{ route('logout') }}">

@@ -147,6 +147,7 @@ class AuthController extends Controller
 
         $responseArray = apiResponse('Success', '', false, [
             'user_id' => $user->id,
+            'role_slug' => $user->role->role_slug ?? null
         ], 200, 'OTP Verification', 'OTP verified successfully');
 
         return response()->json($responseArray, 200);

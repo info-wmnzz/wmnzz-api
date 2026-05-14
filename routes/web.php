@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Admin\UserController;
+use \App\Http\Controllers\Admin\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,9 +26,25 @@ Route::get('/', function () {
     return view('landingPage');
 });
 
-Route::get('/admin/dashboard', function () {
-    return view('admin.dashboard');
-})->name('dashboard');
+// Route::get('/admin/dashboard', function () {
+//     return view('admin.dashboard');
+// })->name('dashboard');
+
+Route::get('/admin/dashboard', [DashboardController::class, 'index'])
+    ->name('dashboard');
+
+
+Route::post('/seller/{id}/approve',
+    [DashboardController::class,'approveSeller'])
+    ->name('admin.seller.approve');
+
+Route::post('/products/{id}/approve',
+    [DashboardController::class,'approveProduct'])
+    ->name('admin.products.approve');
+
+Route::post('/services/{id}/approve',
+    [DashboardController::class,'approveService'])
+    ->name('admin.services.approve');
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);

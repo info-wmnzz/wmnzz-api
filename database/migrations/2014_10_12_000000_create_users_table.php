@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('cus_id',30);
+            $table->string('cus_id',30)->nullable();
             $table->string('name')->nullable();
             $table->string('mobile')->unique();
             $table->string('email')->unique()->nullable();
@@ -21,8 +21,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamp('mobile_verified_at')->nullable();
             $table->integer('otp')->nullable();
-            $table->integer('role_id');
-            $table->tinyInteger('status')->default(1)->comment('1-Active,0-Inactive');
+            $table->integer('role_id')->nullable();
+            $table->tinyInteger('status')->default(0)->comment('0-Pending,1-Approved,2-Rejected,3-Blocked,4-Inactive');
             $table->string('image')->nullable();
             $table->timestamp('deleted_at')->nullable();
             $table->rememberToken();
